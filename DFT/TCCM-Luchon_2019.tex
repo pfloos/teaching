@@ -1,0 +1,786 @@
+\documentclass[compress,9pt]{beamer}
+%\usefonttheme[onlymath]{serif}
+%	***********
+%	* PACKAGE *
+%	***********
+\usepackage{amsmath,amssymb,amsfonts,pgfpages,graphicx,subfigure,xcolor,bm,multirow,microtype,wasysym,multimedia,hyperref,tabularx,amscd,physics}
+\usepackage[version=4]{mhchem}
+\usetheme{CambridgeUS}
+\usecolortheme{lily}
+
+\usepackage[version=4]{mhchem}
+
+\newcommand{\Ec}{E_\text{c}}
+\newcommand{\Exc}{E_\text{xc}}
+%
+\newcommand{\ex}{e_\text{x}}
+\newcommand{\ec}{e_\text{c}}
+\newcommand{\exc}{e_\text{xc}}
+%
+\newcommand{\gX}{gX}
+\newcommand{\GX}{GX}
+\newcommand{\PBEGX}{PBE-GX}
+%
+\newcommand{\Fx}{F_{\text{x}}}
+\newcommand{\FxgX}{F_{\text{x}}^\text{\gX}}
+\newcommand{\FxHgX}{F_{\text{x}}^\text{\HgX}}
+\newcommand{\FxGX}{F_{\text{x}}^\text{\GX}}
+\newcommand{\FxHGX}{F_{\text{x}}^\text{\HGX}}
+\newcommand{\FxPBEGX}{F_{\text{x}}^\text{\PBEGX}}
+%
+\newcommand{\Ex}{E_{\text{x}}}
+\newcommand{\ExLDA}{E_{\text{x}}^\text{LDA}}
+\newcommand{\ExGGA}{E_{\text{x}}^\text{GGA}}
+\newcommand{\ExMGGA}{E_{\text{x}}^\text{MGGA}}
+\newcommand{\ExGLDA}{E_{\text{x}}^\text{GLDA}}
+%
+\newcommand{\FxGGA}{F_{\text{x}}^\text{GGA}}
+\newcommand{\FxGLDA}{F_{\text{x}}^\text{GLDA}}
+\newcommand{\FxMGGA}{F_{\text{x}}^\text{MGGA}}
+\newcommand{\FxFMGGA}{F_{\text{x}}^\text{FMGGA}}
+%
+\newcommand{\Exs}{E_{\text{x},\sigma}}
+\newcommand{\ExsLDA}{E_{\text{x},\sigma}^\text{LDA}}
+\newcommand{\ExsGGA}{E_{\text{x},\sigma}^\text{GGA}}
+\newcommand{\ExsMGGA}{E_{\text{x},\sigma}^\text{MGGA}}
+\newcommand{\ExsGLDA}{E_{\text{x},\sigma}^\text{GLDA}}
+%
+\newcommand{\exLDA}{e_{\text{x}}^\text{LDA}}
+\newcommand{\exGGA}{e_{\text{x}}^\text{GGA}}
+\newcommand{\exGLDA}{e_{\text{x}}^\text{GLDA}}
+\newcommand{\exMGGA}{e_{\text{x}}^\text{MGGA}}
+\newcommand{\exFMGGA}{e_{\text{x}}^\text{FMGGA}}
+%
+\newcommand{\CxLDA}{C_\text{x}^\text{LDA}}
+\newcommand{\CxGLDA}{C_\text{x}^\text{GLDA}}
+\newcommand{\Cx}{C_\text{x}}
+\newcommand{\Cf}{C_\text{F}}
+\newcommand{\rs}{\rho_\sigma}
+\newcommand{\xs}{x_\sigma}
+\newcommand{\ts}{\tau_\sigma}
+\newcommand{\as}{\alpha_\sigma}
+\newcommand{\ns}{n_\sigma}
+\newcommand{\Ls}{L_\sigma}
+\newcommand\upa{\uparrow}
+\newcommand\dwa{\downarrow}
+%
+\newcommand{\br}{\bm{r}}
+\newcommand{\bC}{\bm{C}}
+\newcommand{\bE}{\bm{E}}
+\newcommand{\bI}{\bm{I}}
+\newcommand{\bF}{\bm{F}}
+\newcommand{\bP}{\bm{P}}
+\newcommand{\bS}{\bm{S}}
+\newcommand{\bH}{\bm{H}}
+\newcommand{\mc}{\multicolumn}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+%
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\purple}[1]{\textcolor{purple}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\pub}[1]{\textcolor{purple}{#1}}
+\newcommand{\violet}[1]{\textcolor{violet}{#1}}
+
+\newcommand{\nRad}{N_\text{rad}}
+\newcommand{\nAng}{N_\text{ang}}
+\newcommand{\nGrid}{N_\text{grid}}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,shapes.geometric}
+\usetikzlibrary{decorations.pathmorphing}
+
+
+\newcommand{\mycirc}[1][black]{\Large\textcolor{#1}{\ensuremath\bullet}}
+
+%	*************
+%	* HEAD DATA *
+%	*************
+	\title[Theory and implementation of DFT]
+	{\bf \LARGE Theory and implementation of DFT-based methods}
+
+	\author[loos@irsamc.ups-tlse.fr]
+	{\Large \violet{Pierre-Fran\c{c}ois Loos}}
+
+	\institute[LCPQ]{
+	\large 
+	Laboratoire de Chimie et Physique Quantiques, UMR5626, Universit\'e Paul Sabatier, Toulouse, France
+	}
+	\date[http://irsamc.ups-tlse.fr/loos/]{
+		\purple{31st Jan 2019}
+		\\
+		\bigskip
+		\green{TCCM Winter School LTTC Luchon 2019}
+	}
+	\bigskip
+\begin{document}
+
+
+%-----------------------------------------------------
+%%%	TITLE		%%%
+%-----------------------------------------------------
+\begin{frame}
+	\titlepage
+\end{frame}
+%
+
+%-----------------------------------------------------
+\section{Density-functional theory}
+%-----------------------------------------------------
+%-----------------------------------------------------
+\subsection{History}
+%-----------------------------------------------------
+\begin{frame}{Idea behind density-functional theory (DFT)}
+	\begin{columns}	
+		\begin{column}{0.3\textwidth}
+			\begin{block}{Walter Kohn (1923-2016)}
+				\center \includegraphics[width=0.8\textwidth]{fig/kohn}
+			\end{block}
+		\end{column}
+		\begin{column}{0.65\textwidth}
+			\begin{block}{Hohenberg-Kohn theorem}
+				\bigskip
+				\orange{The ground state electronic energy is completely determined by the electron density $\rho$}\\
+				\bigskip
+				\red{There is a one-to-one correspondence between $\rho$ and the energy $E$}\\
+				\bigskip
+				\purple{Hohenberg-Kohn theorem shows that you can use the electron density $\rho(\br)$ instead of the wave function $\Psi(\br_1, \ldots, \br_n)$}
+				\bigskip
+			\end{block}
+		\end{column}
+	\end{columns}	
+	\bigskip
+	{\bf \violet{The functional connecting $\rho$ and $E$ is unknown....}}\\
+	 The goal is to design functionals connecting the electron density with the energy... \\
+	 \bigskip
+	 \pub{Hohenberg \& Kohn, Phys Rev 136 (1964) B864}
+\end{frame}
+%-----------------------------------------------------
+\subsection{Kohn-Sham theory}
+%-----------------------------------------------------
+\begin{frame}{Kohn-Sham (KS) theory}
+	In the \alert{KS formalism}, one writes the total energy as 
+	\begin{equation*}
+		\boxed{E_\text{KS}[\rho] = \orange{T_\text{S}[\rho]}  + \red{E_\text{ne}[\rho]} + \purple{J[\rho]} + \violet{\Exc[\rho]}}
+	\end{equation*}
+	where
+	\begin{align*}
+	& 	\blue{\rho(\br)} 			= \sum_i^\text{occ} \abs{\psi_i(\br)}^2 									& = \quad &	\text{\blue{electronic density}} 
+		\\
+	& 	\orange{T_\text{S}[\rho]}	= \sum_i^\text{occ} \mel{\psi_i}{- \frac{\nabla^2}{2} }{\psi_i} 			& = \quad &	\text{\orange{non-interacting kinetic energy}} 
+		\\
+	& 	\red{E_\text{ne}[\rho]} 	= -\sum_A^\text{nuc} \int \frac{Z_A \rho(\br)}{\abs{\bm{R}_A - \bm{r}}} d\br			& = \quad &	 \text{\red{electron-nucleus attraction}}  
+		\\
+	& 	\purple{J[\rho]} 			= \frac{1}{2} \iint \frac{\rho(\br_1)\rho(\br_2)}{\abs{\br_1 - \br_2}} d\br_1 d\br_2 		& = \quad &	\text{\purple{classical Coulomb repulsion}}  
+		\\
+	& 	\violet{E_\text{xc}[\rho]} 	= \qty(T[\rho] - T_\text{S}[\rho]) +  \violet{\qty( E_\text{ee}[\rho] - J[\rho])} 			& = \quad &	\text{\violet{exchange-correlation energy}} 
+	\end{align*}
+	\bigskip
+	\pub{Kohn \& Sham Phys Rev 140 (1965) A1133}
+\end{frame}
+
+
+\begin{frame}{Density, Exchange and Correlation}
+	The \purple{exchange}-\violet{correlation} energy is defined as
+	\begin{equation*}
+	\boxed{\begin{split}
+		\Exc[\rho,\zeta] 	
+		& = \purple{\Ex[\rho,\zeta]} + \violet{\Ec[\rho,\zeta]} 
+		\\
+		& = \int \rho(\br) \purple{\ex[\rho(\br),\zeta]} d\br + \int \rho(\br) \violet{\ec[\rho(\br),\zeta]} d\br  
+	\end{split}}
+	\end{equation*}
+	\bigskip
+	The \orange{total density} is
+	\begin{equation*}
+		\rho= \rho_\alpha + \rho_\beta
+	\end{equation*}
+	The \red{spin polarization} is
+	\begin{equation*}
+		\zeta= \frac{\rho_{\alpha} - \rho_\beta}{\rho}= \frac{n_{\alpha} - n_\beta}{n}
+	\end{equation*}
+	The \purple{exchange energy} is given by
+	\begin{equation*}
+		\Ex[\rho,\zeta] = E_{\text{x},\alpha}[\rho_\alpha] + E_{\text{x},\beta}[\rho_\beta]
+	\end{equation*}
+	The \violet{correlation energy} is given by
+	\begin{equation*}
+		\Ec[\rho,\zeta] = E_{\text{c},\alpha\alpha}[\rho_\alpha] + E_{\text{c},\beta\beta}[\rho_\beta] + E_{\text{c},\alpha\beta}[\rho_\alpha,\rho_\beta]
+	\end{equation*}
+\end{frame}
+
+%-----------------------------------------------------
+\section{Exchange functionals}
+%-----------------------------------------------------
+%-----------------------------------------------------
+\subsection{Density-functional approximations}
+%-----------------------------------------------------
+\begin{frame}{Density-functional approximations for exchange}
+	From a \orange{practical point of view}, the exchange energy is given by
+	\begin{equation*}
+		\boxed{
+		\begin{split}
+			E_{\text{x},\sigma} 
+			& = \int \ex(\rho_\sigma,\nabla \rho_\sigma, \tau_\sigma, \ldots) \, \rho_\sigma \, d\br
+			\\
+			& \alert{\approx \sum_i w_i \, \ex[\rho_\sigma(\br_i),\nabla \rho_\sigma(\br_i), \tau_\sigma(\br_i), \ldots] \, \rho_\sigma(\br_i)}
+		\end{split}
+		}
+	\end{equation*}
+	where
+	\begin{itemize}
+		\item $\rho(\br)= \sum_i^\text{occ} \abs{\psi_i(\br)}^2$ is the \blue{one-electron density}
+		\bigskip
+		\item $\nabla \rho(\br)$ is the \orange{gradient of the density}
+		\bigskip
+		\item $\tau(\br) = \sum_i^\text{occ} \abs{\nabla\psi_{i}(\br) }^2$ is the \purple{kinetic energy density}
+	\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Local density approximation}
+%-----------------------------------------------------
+\begin{frame}{Local density approximation (LDA) exchange}
+	The \orange{LDA exchange energy} (Dirac formula or D30) is 
+	\begin{equation*}
+		\ExLDA =  \int \rho(\br) \orange{\exLDA(\rho)} d\br = \Cx \int \rho(\br)^{4/3} d\br
+	\end{equation*}
+	\begin{equation*}
+		\boxed{\orange{\exLDA(\rho)} = \Cx\, \rho^{1/3}}
+	\end{equation*}
+	where
+	\begin{equation*}
+		\Cx = - \frac{3}{2}\qty(\frac{3}{4\pi})^{1/3} = -0.930526\ldots 
+	\end{equation*}
+	has been obtained based on the \violet{infinite uniform electron gas (IUEG)} or \alert{jellium}\\
+	\bigskip
+	\pub{Dirac, Proc Cam Phil Soc 26 (1930) 376}\\
+	\pub{Loos \& Gill, WIREs Comput Mol Sci 6 (2016) 410}
+\end{frame}
+
+
+\begin{frame}{How good is LDA? }
+    %%% TABLE 1 %%%
+    \begin{table}
+    \caption{
+    \label{tab:atoms}
+    Reduced (i.e.~per electron) mean error (ME) and mean absolute error (MAE) (in kcal/mol) of the error (compared to UHF) in the exchange energy}
+    	\begin{tabular}{llcccccc}
+    	\hline
+    	\hline
+    			&			&	\mc{2}{c}{hydrogen-like ions}		& 	\mc{2}{c}{helium-like ions}	& 	\mc{2}{c}{neutral atoms}	\\
+    							\cline{3-4}						\cline{5-6}						\cline{7-8}			
+    			&			&	ME		&	MAE			&	ME		&	MAE			&	ME	&	MAE		\\		
+    	\hline
+    	LDA		&	D30		&	$153.5$	&	$69.7$		&	$150.6$	&	$69.5$		&	$70.3$	&	$9.1$			\\
+    	\hline
+    	\hline
+    	\end{tabular}
+    \end{table}  
+    \bigskip
+	\boxed{\text{\alert{Rule of thumb:} LDA underestimates the exchange by 10\%}}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Generalized gradient approximation}
+%-----------------------------------------------------
+\begin{frame}{Generalized gradient approximation (GGA) exchange}
+	Sham has shown that, for an \green{``almost''} uniform electron gas, 
+	\begin{equation*}
+		\boxed{
+			\ExGGA \approx \ExLDA  - \alert{\frac{5}{(36\pi)^{5/3}}} \int \rho(\br)^{4/3} x^2 d\br
+		}
+	\end{equation*}
+	where
+	\begin{equation*}
+		x = \frac{\abs{\nabla \rho}}{\rho^{4/3}}	\qq{is the \alert{reduced gradient}.}
+	\end{equation*}
+	The \violet{GGA exchange energy} is 
+	\begin{equation*}
+		\boxed{
+			\ExGGA = \int \alert{\FxGGA(x)} \exLDA(\rho) \rho(\br) d\br = \Cx \int \alert{\FxGGA(x)} \rho(\br)^{4/3} d\br
+		}
+	\end{equation*}
+	$\FxGGA(x)$ is usually called the \orange{GGA enhancement factor} and \blue{``smart''} GGAs have 
+	\begin{equation*}
+		\lim_{x \to 0}\FxGGA(x) = 1
+	\end{equation*}
+	 \pub{Sham,  in Computational Methods in Band Theory, edited by P. M Marcus, J. F. Janak, and A. R. Williams (Plenum, New York, 1971)}
+\end{frame}
+
+\begin{frame}{Fashionable GGAs}
+	\begin{block}{\center \bf B88 \pub{[PRA 38 (1988) 3098]}} 
+		\begin{equation*}
+			\Fx^\text{B88}(x) = 1 - \frac{0.0042\,x^2}{1+0.0252\,x \sinh^{-1} x}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf PW91 \pub{[PRB 46 (1992) 6671]}} 
+		\begin{equation*}
+			\Fx^\text{PW91}(x) = \text{ugly}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf G96 \pub{[Mol Phys 89 (1996) 433]}} 
+		\begin{equation*}
+			\Fx^\text{G96}(x) = 1 -\frac{x^{3/2}}{137}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf PBE \pub{[PRL 77 (1996) 3865]}} 
+		\begin{equation*}
+			\Fx^\text{PBE}(x) = 1.804 - \frac{0.804}{1+0.0071x^2}
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Are GGAs better than LDA?}
+    %%% TABLE 1 %%%
+    \begin{table}
+    \caption{
+    \label{tab:atoms}
+    Reduced (i.e.~per electron) mean error (ME) and mean absolute error (MAE) (in kcal/mol) of the error (compared to UHF) in the exchange energy}
+    	\begin{tabular}{llcccccc}
+    	\hline
+    	\hline
+    			&			&	\mc{2}{c}{hydrogen-like ions}		& 	\mc{2}{c}{helium-like ions}	& 	\mc{2}{c}{neutral atoms}	\\
+    							\cline{3-4}						\cline{5-6}						\cline{7-8}			
+    			&			&	ME		&	MAE			&	ME		&	MAE			&	ME	&	MAE		\\		
+    	\hline
+    	LDA		&	D30		&	$153.5$	&	$69.7$		&	$150.6$	&	$69.5$		&	$70.3$	&	$9.1$			\\
+    	\bf GGA		&	B88		&	$9.5$	&	$4.3$		&	$9.3$	&	$4.7$		&	$2.8$	&	$0.5$			\\
+    			&	G96		&	$4.4$	&	$2.0$		&	$4.4$	&	$2.2$		&	$2.1$	&	$0.5$			\\
+    			&	PW91	&	$19.4$	&	$8.8$		&	$19.1$	&	$9.3$		&	$4.5$	&	$0.8$			\\
+    			&	PBE		&	$22.6$	&	$10.3$		&	$22.3$	&	$10.7$		&	$7.4$	&	$0.6$			\\
+    	\hline
+    	\hline
+    	\end{tabular}
+    \end{table}
+    %%%
+	\bigskip
+	\boxed{\text{\alert{Rule of thumb:} GGAs are really good...}}
+\end{frame}
+%-----------------------------------------------------
+\subsection{Meta-generalized gradient approximation}
+%-----------------------------------------------------
+\begin{frame}{Meta-generalized gradient approximation (MGGA) exchange}
+	Because it wasn't enough, people have introduced $\tau$ in functionals 
+	\begin{gather*}
+			\exMGGA(\rho,x,\tau) = \exLDA(\rho) \FxMGGA(x,\tau) 
+			\\
+			\qq{\bf \alert{or}}
+			\\
+			\exMGGA(\rho,x,\alert{\alpha}) = \exLDA(\rho) \FxMGGA(x,\alert{\alpha})
+	\end{gather*}
+	where \orange{$0 \le \alpha < \infty$} is the \alert{curvature of the Fermi hole}*:
+	\begin{equation*}
+		\boxed{
+		\violet{
+			\alpha = \frac{\tau - \tau_\text{W}}{\tau_\text{IUEG}} = \frac{\tau}{\tau_\text{IUEG}} - \frac{x^2}{4 \Cf}
+		}}
+		\qquad 
+		\Cf = \frac{3}{5} (6\pi^2)^{2/3}
+	\end{equation*}
+	\begin{equation*}
+		\tau_\text{W} = \frac{\abs{\nabla\rho}^2}{4\,\rho} \qq{is the \blue{von Weizs{\"a}cker kinetic energy density}}
+	\end{equation*}
+	\begin{equation*}
+		\tau_\text{IUEG} = \Cf \rho^{5/3} \qq{is the \orange{kinetic energy density of the IUEG}}
+	\end{equation*}
+	Well thought-out MGGAs ensure that
+	\begin{equation*}
+		\lim_{x \to 0} \lim_{\alpha \to 1} \FxMGGA(x,\alpha) = 1
+	\end{equation*}
+	*\alert{Remember ELF!?} ELF = $(1+\alpha^2)^{-1}$
+\end{frame}
+
+\begin{frame}{Fashionable MGGAs}
+	\begin{block}{\center \bf M06-L \pub{[JCP 125 (2006) 194101]}} 
+		\begin{equation*}
+			\Fx^\text{M06-L}(x) = \text{awful (17 parameters)}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf TPSS \pub{[PRL 91 (2003) 146401]}} 
+		\begin{equation*}
+			\Fx^\text{TPSS}(x) = \text{not pretty}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf mBEEF \pub{[JCP 140 (2014) 144107]}} 
+		\begin{equation*}
+			\Fx^\text{mBEEF}(x) = \text{very ugly (64 parameters)*}
+		\end{equation*}
+	\end{block}
+	\begin{block}{\center \bf SCAN \pub{[PRL 115 (2015) 036402]}} 
+		\begin{equation*}
+			\Fx^\text{SCAN}(x) = \text{long (constraint with ``model'' systems)}
+		\end{equation*}
+	\end{block}
+	*spits you out a Bayesian error estimate for the same price
+\end{frame}
+
+\begin{frame}{Are MGGAs better than GGAs?}
+    %%% TABLE 1 %%%
+    \begin{table}
+    \caption{
+    \label{tab:atoms}
+    Reduced (i.e.~per electron) mean error (ME) and mean absolute error (MAE) (in kcal/mol) of the error (compared to UHF) in the exchange energy}
+    	\begin{tabular}{llcccccc}
+    	\hline
+    	\hline
+    			&			&	\mc{2}{c}{hydrogen-like ions}		& 	\mc{2}{c}{helium-like ions}	& 	\mc{2}{c}{neutral atoms}	\\
+    							\cline{3-4}						\cline{5-6}						\cline{7-8}			
+    			&			&	ME		&	MAE			&	ME		&	MAE			&	ME	&	MAE		\\		
+    	\hline
+    	LDA		&	D30		&	$153.5$	&	$69.7$		&	$150.6$	&	$69.5$		&	$70.3$	&	$9.1$			\\
+    	GGA		&	B88		&	$9.5$	&	$4.3$		&	$9.3$	&	$4.7$		&	$2.8$	&	$0.5$			\\
+    			&	G96		&	$4.4$	&	$2.0$		&	$4.4$	&	$2.2$		&	$2.1$	&	$0.5$			\\
+    			&	PW91	&	$19.4$	&	$8.8$		&	$19.1$	&	$9.3$		&	$4.5$	&	$0.8$			\\
+    			&	PBE		&	$22.6$	&	$10.3$		&	$22.3$	&	$10.7$		&	$7.4$	&	$0.6$			\\
+    	\bf MGGA	&	M06-L	&	$44.4$	&	$88.8$		&	$12.0$	&	$24.0$		&	$4.2$	&	$2.9$			\\
+    			&	TPSS	&	$0.0$	&	$0.0$		&	$0.7$	&	$0.4$		&	$0.7$	&	$1.1$			\\
+    			&	revTPSS	&	$0.0$	&	$0.0$		&	$0.5$	&	$0.3$		&	$3.5$	&	$2.5$			\\
+    			&	MS0		&	$0.0$	&	$0.0$		&	$0.4$	&	$0.2$		&	$1.3$	&	$2.4$			\\
+    			&	MVS		&	$0.0$	&	$0.0$		&	$0.3$	&	$0.2$		&	$2.7$	&	$0.9$			\\
+    			&	SCAN	&	$0.0$	&	$0.0$		&	$0.3$	&	$0.2$		&	$1.2$	&	$1.6$			\\
+    	\hline
+    	\hline
+    	\end{tabular}
+    \end{table}
+    %%%
+	\bigskip
+	\boxed{\text{\alert{Rule of thumb:} MGGAs are slightly better than GGAs...}}
+\end{frame}
+
+\begin{frame}{A zoo of functionals}
+	\begin{block}{Pick your poison...}
+		\center \includegraphics[width=0.8\textwidth]{fig/zoo}
+		\\
+		\pub{Burke, JCP 136 (2012) 150901}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Jacob's ladder of DFT}
+		\begin{table}
+		\footnotesize
+			\begin{tabular}{cclc}
+			\hline
+			\hline	\noalign{\smallskip}
+				Level	&	Name				&	Variables 		&	Examples						\\	
+				\hline								
+				1		&	LDA				&	$\rho$								&	VWN,PZ81,X$\alpha$				\\	
+				2		&	GGA				&	$\rho$,$\nabla \rho$						&	BLYP,OLYP,PW86,PW91,PBE,PBEsol	\\	
+				3		&	meta-GGA		&	$\rho$,$\nabla \rho$,$\nabla^2 \rho$,$\tau$	&	BR,B95,TPSS,SCAN	\\	
+				4		&	hyper-GGA		&	+ HF exchange							&	BH\&H, B3LYP,B3PW91,O3LYP,PBE0	\\	
+				5		&	generalized-RPA	&	+ HF virtual orbitals						&	OEP2	\\	
+				\hline
+			\end{tabular}
+		\end{table}
+		\center \includegraphics[width=0.35\textwidth]{fig/jacob}
+\end{frame}
+%-----------------------------------------------------
+\subsection{DFT successes and pitfalls}
+%-----------------------------------------------------
+\begin{frame}{The good, the bad and the ugly...}
+	\begin{block}{DFT successes}
+		\begin{itemize}
+			\item Sometimes predicts \orange{reaction energetics} with amazing accuracy
+			\item Often predicts \blue{molecular structures} of high quality
+			\item Often predicts \alert{vibrational frequencies} that agree well with experiment
+			\item \violet{Vertical transition energies} to low-lying excited states very good
+			\item and many others...
+		\end{itemize}
+	\end{block}
+	\begin{block}{DFT failures}
+		\begin{itemize}
+			\item \ce{H2+}, \ce{He2+} and other odd-electron bonds: \alert{self-interaction error}
+			\item Relative alkane energies, large extended $\pi$ systems, Diels-Alder reaction, etc.
+			\item \orange{Weak interactions due to dispersion forces} (van der Waals) 
+			\item \violet{Charge-transfer excited}, \purple{core-excited} and \green{Rydberg} states
+			\item Strongly-correlated systems
+			\item and many others...
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\section{DFT numerical quadrature}
+%-----------------------------------------------------
+\subsection{Radial and angular quadratures}
+%-----------------------------------------------------
+\begin{frame}{Radial and angular quadratures}
+	\begin{block}{Euler-Maclaurin quadrature}
+		\begin{equation*}
+			\boxed{\int_0^\infty r^2 f(r) dr \approx \sum_{i=1}^{\nRad} w_i f(r_i)}
+		\end{equation*}
+		where the \alert{roots} and \alert{weights} are
+		\begin{gather*}
+			r_i = R\,i^2 (\nRad+1-i)^{-2}	\\
+			w_i = 2R^3 (\nRad+1) i^5 (\nRad+1-i)^{-7}
+		\end{gather*}
+	\end{block}
+
+	\begin{block}{Lebedev quadrature}
+		\begin{equation*}
+			\boxed{\int_S g(x,y,z) d\Omega \approx \sum_{j=1}^{\nAng} W_j g(x_j,y_j,z_j)}
+		\end{equation*}
+		where the \orange{roots} $(x_j,y_j,z_j)$ and \orange{weights} $W_j$ are chosen so that the quadrature is exact for as many low-degree spherical harmonics as possible.
+	\end{block}
+\end{frame}
+
+%---------------------------------
+\subsection{Quadrature in 3D}
+%---------------------------------
+\begin{frame}{Quadrature in 3D}
+In typical DFT calculations, we are faced with integrals over all space
+\begin{equation*}
+	\boxed{I = \int F(\br) d\br}
+\end{equation*}
+If an atomic nucleus forms a natural origin, we can express this integral in terms of spherical polar coordinates and then estimate the radial and angular integrals using the quadratures described above, i.e.
+\begin{align*}
+	I	& = \int_0^\infty  \int_0^\pi \int_0^{2\pi} F(r,\theta,\phi) \ r^2 \sin\theta \,d\phi \,d\theta \,dr	
+		\\
+		& \approx \sum_{i=1}^{\nRad} \sum_{j=1}^{\nAng} w_i W_j F(r_i, \theta_j, \phi_j)
+\end{align*}
+\end{frame}
+
+\begin{frame}{Testing the numerical quadrature}
+
+	The number of electrons is given by
+	\begin{equation*}
+		\boxed{n = \int \rho(\br) d\br= \int_0^\infty  \int_0^\pi \int_0^{2\pi} \rho(r,\theta,\phi) \ r^2 \sin\theta \,d\phi \,d\theta \,dr}
+	\end{equation*}
+	This can be evaluated on the quadrature grid to test the quality of the numerical integration
+	\begin{equation*}
+		n \approx \sum_{i=1}^{\nRad} \sum_{j=1}^{\nAng} w_i W_j \,\rho(r_i, \theta_j, \phi_j)
+	\end{equation*}
+	If the result is far from the number of electrons, it means that your integration is inaccurate and you might want to use a larger grid
+\end{frame}
+
+
+
+%-----------------------------------------------------
+\section{Roothaan-Hall equations}
+%-----------------------------------------------------
+%-----------------------------------------------------
+\subsection{Basis set approximation}
+%-----------------------------------------------------
+\begin{frame}{Introduction of a basis}
+	\begin{block}{Expansion in a basis}
+		$$ \psi_i(\bm{r}) = \sum_\mu^K C_{\mu i} \phi_{\mu}(\bm{r})	
+		\qquad \equiv	\qquad
+		| i \rangle = \sum_\mu^K C_{\mu i} |\mu\rangle$$
+		\alert{\bf $K$ AOs gives $K$ MOs:}
+		 \blue{$N/2$ are occupied MOs} and \orange{$K-N/2$ are vacant/virtual MOs}
+	\end{block}
+	\begin{block}{Roothaan-Hall equations}
+			\begin{equation*}
+			\begin{split}
+				&  f | i \rangle = \varepsilon_i | i \rangle
+				\quad	\Rightarrow	\quad
+				f \sum_{\nu} C_{\nu i} | \nu \rangle = \varepsilon_i \sum_{\nu} C_{\nu i} | \nu \rangle
+				\\
+				\Rightarrow	\quad	& \langle \mu | f \sum_{\nu} C_{\nu i} | \nu \rangle = \varepsilon_i \langle \mu | \sum_{\nu} C_{\nu i} | \nu \rangle
+				\\
+				\Rightarrow	\quad	&  \sum_{\nu} C_{\nu i} \langle \mu | f | \nu \rangle = \sum_{\nu} C_{\nu i}  \varepsilon_i \langle \mu | \nu \rangle
+				 \quad	\Rightarrow	\quad
+				 \boxed{\alert{\sum_{\nu} F_{\mu \nu}  C_{\nu i} = \sum_{\nu}  S_{\mu \nu} C_{\nu i} \varepsilon_i }}
+			\end{split}
+			\end{equation*}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Introduction of a basis (Take 2)}
+	\begin{block}{Matrix form of the Roothaan-Hall equations}
+		$$ \boxed{\mathbf{F} \, \mathbf{C} = \mathbf{S} \, \mathbf{C} \, \mathbf{E} \qquad \Leftrightarrow \qquad \mathbf{F}^\prime \, \mathbf{C}^\prime = \mathbf{C}^\prime \, \mathbf{E}}$$
+		$$  \mathbf{F}' = \mathbf{X}^\dag \, \mathbf{F} \, \mathbf{X} 
+		\qquad 
+		\mathbf{C}= \mathbf{X} \,  \mathbf{C}'
+		\qquad 
+		\mathbf{X}^\dag \,  \mathbf{S} \,  \mathbf{X} = \mathbb{I}
+		$$
+		\begin{itemize}	
+			\item \violet{Fock matrix} $ F_{\mu\nu} = \langle \mu | f | \nu \rangle$ and \blue{Overlap matrix} $S_{\mu\nu} = \langle \mu | \nu \rangle$
+			\item We need to determine the \orange{coefficient matrix} $\mathbf{C}$ and the \purple{orbital energies} $\mathbf{E}$
+		\end{itemize}
+		\begin{equation*}
+			\bC = 
+			\begin{pmatrix}
+				C_{11}	&	C_{12}	&	\cdots	&	C_{1K}	\\
+				C_{21}	&	C_{22}	&	\cdots	&	C_{2K}	\\
+				\vdots	&	\vdots	&	\ddots	&	\vdots	\\
+				C_{K1}	&	C_{K2}	&	\cdots	&	C_{KK}	\\				
+			\end{pmatrix}
+			\qquad
+			\bE = 
+			\begin{pmatrix}
+				\varepsilon_{1}	&	0			&	\cdots	&	0		\\
+				0			&	\varepsilon_{2}	&	\cdots	&	0			\\
+				\vdots		&	\vdots		&	\ddots	&	\vdots		\\
+				0			&	0			&	\cdots	&	\varepsilon_{K}	\\				
+			\end{pmatrix}		
+		\end{equation*}
+	\end{block}
+	\begin{block}{Self-consistent field (SCF) procedure}
+		$$\mathbf{F}(\mathbf{C}) \, \mathbf{C} = \mathbf{S} \, \mathbf{C} \, \mathbf{E} \quad \text{\alert{\bf How do we solve these HF equations?}}$$
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Fock matrix}
+%-----------------------------------------------------
+\begin{frame}{Expression of the Fock matrix in the HF case}
+	\begin{equation*}
+		\begin{split}
+			F_{\mu \nu} 
+			& = \langle \mu | h + \sum_j^\text{occ} (\cJ_j - \cK_j) | \nu \rangle = H_{\mu \nu} +  \sum_j^\text{occ} \langle \mu | \cJ_j - \cK_j | \nu \rangle
+			\\
+			& = H_{\mu \nu} +  \sum_j^\text{occ} (\langle \mu \chi_j | r_{12}^{-1}  | \nu \chi_j \rangle - \langle \mu \chi_j |  r_{12}^{-1} | \chi_j  \nu \rangle)
+			\\
+			& = H_{\mu \nu} +  \sum_j^\text{occ} \sum_{\lambda \sigma} C_{\lambda j} C_{\sigma j} (\langle \mu \lambda | r_{12}^{-1}  | \nu \sigma \rangle - \langle \mu \lambda |  r_{12}^{-1} | \sigma  \nu \rangle)
+			\\
+			& = H_{\mu \nu} +  \sum_{\lambda \sigma} \alert{P_{\lambda \sigma}} (\orange{\langle \mu \lambda   | \nu \sigma \rangle} - \langle \mu \lambda  | \sigma  \nu \rangle)
+			\\
+			& = H_{\mu \nu} +  \sum_{\lambda \sigma} \alert{P_{\lambda \sigma}} \blue{\langle \mu \lambda   || \nu \sigma \rangle}
+			= H_{\mu \nu} +  \violet{G_{\mu \nu}}
+		\end{split}
+	\end{equation*}
+	\begin{equation*}
+		F_{\mu \nu} 
+		= H_{\mu \nu} +  \sum_{\lambda \sigma} P_{\lambda \sigma} (\langle \mu \lambda   | \nu \sigma \rangle - \frac{1}{2} \langle \mu \lambda  | \sigma  \nu \rangle)
+		\quad 
+		\text{\alert{(closed shell)}}
+	\end{equation*}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Density matrix \& Integral notations}
+%-----------------------------------------------------
+\begin{frame}{Density matrix \& Chemists vs Physicists}
+	\begin{block}{Density matrix $\mathbf{P}$}
+		$$
+		\boxed{ P_{\mu \nu} = 	\sum_i^\text{occ} C_{\mu i} C_{\nu i}} 
+		\qquad
+		\text{or}
+		\qquad
+		P_{\mu \nu} = 	2 \sum_i^\text{N/2} C_{\mu i} C_{\nu i}
+		\quad 
+		\text{\alert{(closed shell)}}
+		$$
+	\end{block}
+	\begin{block}{Physicist's notation for two-electron integrals}
+		$$ \langle \mu \nu | \lambda \sigma \rangle = \iint \phi_\mu(\alert{1}) \phi_\nu(\orange{2}) \frac{1}{r_{12}} \phi_\lambda(\alert{1}) \phi_\sigma(\orange{2}) d\bm{r}_1 d\bm{r}_2 $$
+		$$  \langle \mu \nu \blue{||} \lambda \sigma \rangle =  \langle \mu \nu | \lambda \sigma \rangle -  \langle \mu \nu |  \sigma \lambda \rangle $$
+	\end{block}
+	\begin{block}{Chemist's notation for two-electron integrals}
+		$$ ( \mu \nu | \lambda \sigma ) = \iint \phi_\mu(\alert{1}) \phi_\nu(\alert{1}) \frac{1}{r_{12}} \phi_\lambda(\orange{2}) \phi_\sigma(\orange{2}) d\bm{r}_1 d\bm{r}_2 $$
+		$$ ( \mu \nu \blue{||} \lambda \sigma ) = ( \mu \nu | \lambda \sigma ) - ( \mu \sigma | \lambda \nu ) $$
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Self-consistent field algorithm}
+%-----------------------------------------------------
+\begin{frame}{How to perform a HF or KS calculation in practice?}
+	\begin{block}{The SCF algorithm}
+		\begin{enumerate}
+			\item \orange{Specify molecule} $\{\bm{R}_A\}$ and $\{Z_A\}$ and \violet{basis set} $\{\phi_\mu\}$ 
+			\item Calculate integrals $S_{\mu \nu}$, $H_{\mu \nu}$ and $\langle \mu \nu | \lambda \sigma \rangle$
+			\item Diagonalize $\mathbf{S}$ and compute $\mathbf{X}$
+			\item Obtain \alert{guess density matrix} for $\mathbf{P}$
+			\begin{enumerate}
+				\item[1.] Calculate $\mathbf{G}$ and then $\mathbf{F} = \mathbf{H} + \mathbf{G}$
+				\item[2.] Compute $\mathbf{F}' = \mathbf{X}^\dag \,  \mathbf{F} \,  \mathbf{X}$
+				\item[3.] Diagonalize $\mathbf{F}'$ to obtain $\mathbf{C}'$ and $\mathbf{E}$
+				\item[4.] Calculate $\mathbf{C}= \mathbf{X} \,  \mathbf{C}'$
+				\item[5.] Form a \blue{new density matrix} $\mathbf{P} = \mathbf{C} \, \mathbf{C}^\dag$
+				\item[6.] \alert{Am I converged?} If not go back to 1.
+			\end{enumerate}
+			\item Calculate stuff that you want, like $E_\text{HF}$ for example
+		\end{enumerate}
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Orthogonalization matrix}
+%-----------------------------------------------------
+\begin{frame}{How to calculate $\mathbf{X}$?}
+	\begin{block}{Different orthogonalizations}
+		\begin{enumerate}
+			\item \violet{Symmetric orthogonalization}
+			$$ \mathbf{X} = \mathbf{S}^{-1/2} = \mathbf{U} \,  \mathbf{s}^{-1/2} \,  \mathbf{U}^\dag $$
+			Is it working?
+			$$ \mathbf{X}^\dag \,  \mathbf{S} \,  \mathbf{X} = \mathbf{S}^{-1/2} \, \mathbf{S} \, \mathbf{S}^{-1/2} = \bI$$
+			\item \alert{Canonical orthogonalization} (when you have linear dependencies)
+			$$ \mathbf{X} = \mathbf{U} \,  \mathbf{s}^{-1/2}$$
+			Is it working?
+			$$ \mathbf{X}^\dag \,  \mathbf{S} \,  \mathbf{X} = \mathbf{s}^{-1/2} \, \mathbf{U}^{\dag}\, \mathbf{S} \, \mathbf{U} \, \mathbf{s}^{-1/2} =  \mathbf{s}^{-1/2} \, \mathbf{s} \, \mathbf{s}^{-1/2} = \bI $$
+			\item \blue{Gram-Schmidt orthogonalization}
+		\end{enumerate}
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Guess density matrix}
+%-----------------------------------------------------
+\begin{frame}{How to obtain a good guess for the MOs or density matrix?}
+	\begin{block}{Possible initial density matrix}
+		\begin{enumerate}
+			\bigskip
+			\item We can set \purple{$\mathbf{P} = \mathbf{0}$ $\Rightarrow$ $\bF = \bH$} (\orange{core Hamiltonian approximation}):\\
+			$\Rightarrow$ Usually a poor guess but easy to implement
+			\bigskip
+			\item Use \alert{EHT or semi-empirical methods} (cf previous lectures):\\
+			$\Rightarrow$ Out of fashion
+			\bigskip
+			\item Using \violet{tabulated atomic densities}:\\
+			$\Rightarrow$ ``SAD'' guess in QChem/IQmol
+			\bigskip
+			\item \blue{Read the MOs of a previous calculation:}\\
+			$\Rightarrow$  Very common and very useful
+			\bigskip
+		\end{enumerate}
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{Convergence?}
+%-----------------------------------------------------
+\begin{frame}{How do I know I have converged (or not)?}
+	\begin{block}{Convergence in SCF calculations}
+		\begin{enumerate}
+			\bigskip
+			\item You can check the \orange{energy and/or the density matrix}:\\
+			$\Rightarrow$ The energy/density \textbf{should not} change at convergence
+			\bigskip
+			\item You can check the commutator \alert{$\bF \, \bP \, \bS - \bS \, \bP \, \bF$}:\\
+			$\Rightarrow$ At convergence, we have \alert{$\bF \, \bP \, \bS - \bS \, \bP \, \bF = \mathbf{0}$}
+			\bigskip
+			\item The \violet{DIIS (direct inversion in the iterative subspace) method} is usually used to speed up convergence:\\
+			$\Rightarrow$ \blue{Extrapolation of the Fock matrix} using previous iterations
+			$$ \bF_{m+1} = \sum_{i=m-k}^{m} c_i \, \bF_i $$
+			\bigskip
+		\end{enumerate}
+	\end{block}
+\end{frame}
+
+%-----------------------------------------------------
+\subsection{HF energy}
+%-----------------------------------------------------
+\begin{frame}{Expression of the HF energy }
+	\begin{equation*}
+		\begin{split}
+			E_\text{HF} 
+			& = \sum_i h_i + \frac{1}{2} \sum_{ij} (\cJ_{ij} - \cK_{ij}) \quad \alert{\text{(cf few slides ago)}}
+			\\
+			& = \sum_i  \langle \sum_\mu c_{\mu i} \phi_\mu | h |  \sum_\nu c_{\nu i} \phi_\nu \rangle 
+			\\
+			& + \frac{1}{2} \sum_{ij} \langle (\sum_\mu c_{\mu i} \phi_\mu)(\sum_\lambda c_{\lambda j} \phi_\lambda)|| (\sum_\nu c_{\nu i} \phi_\nu)(\sum_\sigma c_{\sigma j} \phi_\sigma)\rangle
+			\\
+			& = \sum_{\mu \nu} P_{\mu \nu} \left[ H_{\mu \nu} + \frac{1}{2} \sum_{\lambda \sigma} P_{\lambda \sigma} \langle \mu \lambda || \nu \sigma \rangle \right]
+		\end{split}
+	\end{equation*}
+		$$\boxed{E_\text{HF} = \frac{1}{2} \text{Tr}{\left[\mathbf{P} \, (\mathbf{H} + \mathbf{F})\right]}}$$
+\end{frame}
+
+
+
+\end{document}
